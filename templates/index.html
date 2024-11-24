@@ -40,15 +40,27 @@
 
         function clearLogs() {
             fetch('/clear_log', { method: 'POST' })
-                .then(response => fetchNewLogs())
+                .then(response => {
+                    if (response.ok) {
+                        const logContainer = document.getElementById('log-contents');
+                        logContainer.textContent = ''; // Clear the log container
+                    }
+                })
                 .catch(error => console.error('Error clearing logs:', error));
         }
 
         function exportLogs() {
             fetch('/export_log')
-                .then(response => response.json())
-                .then(data => {
-                    alert('Logs exported to: ' + data.export_path);
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'exported_log.txt';  // Filename for the downloaded file
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
                 })
                 .catch(error => console.error('Error exporting logs:', error));
         }

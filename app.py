@@ -1,8 +1,9 @@
 import os
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_from_directory
 from generateLog import start_log_generator
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+log_dir = os.path.join(BASE_DIR, 'logs')
 filename = 'your_log_file.log'
 app = Flask(__name__)
 
@@ -47,13 +48,8 @@ def clear_log():
 
 @app.route('/export_log', methods=['GET'])
 def export_log():
-    log_file_full_path = os.path.join(BASE_DIR, 'logs', filename)
-    with open(log_file_full_path, 'r') as f:
-        log_content = f.read()
-    export_path = os.path.join(BASE_DIR, 'logs', 'exported_log.txt')
-    with open(export_path, 'w') as f:
-        f.write(log_content)
-    return jsonify({"export_path": export_path})
+    log_file_full_path = os.path.join(log_dir, filename)
+    return send_from_directory(log_dir, filename, as_attachment=True)
 
 
 if __name__ == '__main__':
