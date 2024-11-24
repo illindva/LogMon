@@ -1,0 +1,35 @@
+/* static/styles.css */
+#log-contents {
+    background-color: black;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    white-space: pre-wrap; /* Ensures whitespace is respected */
+}
+.log-console {
+    max-height: 500px; /* Adjust the height as needed */
+    overflow-y: scroll;
+    white-space: pre-wrap; /* To ensure lines wrap correctly */
+    background-color: #f8f9fa; /* Optional: to distinguish the log area */
+    padding: 10px;
+    border: 1px solid #dedede;
+}
+
+.navbar-custom {
+    background-color: black;
+}
+
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-link {
+    color: white;
+}
+
+.footer {
+    background-color: black;
+    color: white;
+    padding: 10px 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}

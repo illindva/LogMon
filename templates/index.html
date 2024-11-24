@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Log Viewer{% endblock %}
+
+{% block content %}
+    <h1>Log Viewer</h1>
+    <div class="card">
+        <div class="card-body">
+            <div class="log-actions d-flex justify-content-end mb-2">
+                <button onclick="clearLogs()" class="btn btn-light btn-sm mx-1" title="Clear Logs">
+                    <i class="fas fa-trash-alt">clearLogs</i>
+                </button>
+                <button onclick="exportLogs()" class="btn btn-light btn-sm mx-1" title="Export Logs">
+                    <i class="fas fa-file-export">exportLogs</i>
+                </button>
+                <button onclick="copyLogs()" class="btn btn-light btn-sm mx-1" title="Copy Logs">
+                    <i class="fas fa-copy">copyLogs</i>
+                </button>
+            </div>
+            <pre id="log-contents" class="log-console">
+                {% for line in log_lines %}
+                {{ line.rstrip() }}
+                {% endfor %}
+            </pre>
+        </div>
+    </div>
+    <script>
+        function fetchNewLogs() {
+            fetch('/update_log')
+                .then(response => response.json())
+                .then(data => {
+                    const logContainer = document.getElementById('log-contents');
+                    data.forEach(line => {
+                        const lineNode = document.createTextNode(line + '\n');
+                        logContainer.insertBefore(lineNode, logContainer.firstChild);
+                    });
+                })
+                .catch(error => console.error('Error fetching logs:', error));
+        }
+
+        function clearLogs() {
+            fetch('/clear_log', { method: 'POST' })
+                .then(response => fetchNewLogs())
+                .catch(error => console.error('Error clearing logs:', error));
+        }
+
+        function exportLogs() {
+            fetch('/export_log')
+                .then(response => response.json())
+                .then(data => {
+                    alert('Logs exported to: ' + data.export_path);
+                })
+                .catch(error => console.error('Error exporting logs:', error));
+        }
+
+        function copyLogs() {
+            const logContainer = document.getElementById('log-contents');
+            navigator.clipboard.writeText(logContainer.textContent)
+                .then(() => {
+                    alert('Log copied to clipboard.');
+                })
+                .catch(error => console.error('Error copying logs:', error));
+        }
+
+        setInterval(fetchNewLogs, 30000); // Set interval to 30 seconds
+    </script>
+    <!-- Include Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+{% endblock %}
